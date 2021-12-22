@@ -45,10 +45,12 @@ public class HealthcareServiceTests {
                 .thenReturn(new PatientInfo("Семен", "Михайлов", LocalDate.of(1982, 1, 16),
                         new HealthInfo(new BigDecimal("36.6"), new BloodPressure(125, 78))));
 
-        SendAlertService sendAlertService = Mockito.spy(SendAlertServiceImpl.class);
+        SendAlertService sendAlertService = Mockito.mock(SendAlertServiceImpl.class);
 
         MedicalService medicalService = new MedicalServiceImpl(patientInfoRepository, sendAlertService);
         medicalService.checkBloodPressure(id, bloodPressure);
+
+        Mockito.verify(sendAlertService, Mockito.only()).send(Mockito.anyString());
     }
 
     @Test
@@ -61,10 +63,12 @@ public class HealthcareServiceTests {
                 .thenReturn(new PatientInfo("Семен", "Михайлов", LocalDate.of(1982, 1, 16),
                         new HealthInfo(new BigDecimal("36.6"), new BloodPressure(125, 78))));
 
-        SendAlertService sendAlertService = Mockito.spy(SendAlertServiceImpl.class);
+        SendAlertService sendAlertService = Mockito.mock(SendAlertServiceImpl.class);
 
         MedicalService medicalService = new MedicalServiceImpl(patientInfoRepository, sendAlertService);
         medicalService.checkTemperature(id, temperature);
+
+        Mockito.verify(sendAlertService, Mockito.only()).send(Mockito.anyString());
     }
 
     @Test
@@ -78,11 +82,13 @@ public class HealthcareServiceTests {
                 .thenReturn(new PatientInfo("Семен", "Михайлов", LocalDate.of(1982, 1, 16),
                         new HealthInfo(new BigDecimal("36.6"), new BloodPressure(125, 78))));
 
-        SendAlertService sendAlertService = Mockito.spy(SendAlertServiceImpl.class);
+        SendAlertService sendAlertService = Mockito.mock(SendAlertServiceImpl.class);
 
         MedicalService medicalService = new MedicalServiceImpl(patientInfoRepository, sendAlertService);
         medicalService.checkBloodPressure(id, bloodPressure);
         medicalService.checkTemperature(id, temperature);
+
+        Mockito.verify(sendAlertService, Mockito.never()).send(Mockito.anyString());
     }
 
     @Test
@@ -91,6 +97,7 @@ public class HealthcareServiceTests {
         sendAlertService.send("Test message");
 
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+
         Mockito.verify(sendAlertService).send(argumentCaptor.capture());
         Assertions.assertEquals("Test message", argumentCaptor.getValue());
     }
